@@ -50,54 +50,25 @@ def read_atl08(fname, bbox=None):
                                   
                     # if land segment not exist 
                     if 'land_segments' not in list(fi[g].keys()):  continue
-                                  
-                    lat = fi[g+'/land_segments/latitude'][:]
-
-                    lon = fi[g+'/land_segments/longitude'][:]
-
-                    canopy_h = fi[g+'/land_segments/canopy/h_canopy'][:]
-                    h_te_mean =  fi[g+'/land_segments/terrain/h_te_mean'][:]
-
-
-                    #ATL08_plot.ATL08plot(lon, lat, h_te_mean, fi) 
-                    #---------------------------------------------#
-
-                    # 2) Filter data according region and quality #
-
-                    #---------------------------------------------#
-
-                    # Select a region of interest
-
-                    if bbox:
-
-                        lonmin, lonmax, latmin, latmax = bbox
-
-                        bbox_mask = (lon >= lonmin) & (lon <= lonmax) & (lat >= latmin) & (lat <= latmax)
-
-                    else:
-
-                        bbox_mask = np.ones_like(lat, dtype=bool) # get all
-
-                    # Test for no data
-
-                    if len(canopy_h) == 0: continue
-
-                    #-----------------------#
-
-                    # 3) Save selected data #
-
-                    #-----------------------#
-
-
-                    # save as csv How much is the flow of people in Dalian http://mobile.120wtrlyy.com/
 
                     result = pd.DataFrame()
-                    #print(time)
-                    #result['time'] = time  
-                    result['lon'] = lon
-                    result['lat'] = lat
-                    result['canopy_h'] = canopy_h
-                    result['h_te_mean'] = h_te_mean
+
+                                  
+                    result['lat'] = fi[g+'/land_segments/latitude'][:]
+
+                    result['lon'] = fi[g+'/land_segments/longitude'][:]
+
+                    result['h_canopy'] = fi[g+'/land_segments/canopy/h_canopy'][:]
+
+                    ### add uncertainty
+                    result['h_canopy_uncertainty']  = fi[g+'/land_segments/canopy/h_canopy_uncertainty'][:]
+                
+                    result['h_te_mean'] =  fi[g+'/land_segments/terrain/h_te_mean'][:]
+
+                    result['h_te_best_fit ']  =  fi[g+'/land_segments/terrain/h_te_best_fit'][:]
+
+                    result['h_te_uncertainty']  =  fi[g+'/land_segments/terrain/h_te_uncertainty'][:]
+   
                     result.insert(0, 'beam', g[1:])
                    # result['beam'] = g[1:]
                    # extract time
@@ -136,5 +107,5 @@ for fname in NameList:
 #print(total['lon'])
 #ATL08_plot.ATL08plot(total, 'IS_all') 
 
-total.to_csv('CSV/' + 'total' +'.csv', index=False)
+total.to_csv('CSV/' + 'total_update' +'.csv', index=False)
 
